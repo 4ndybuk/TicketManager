@@ -29,7 +29,11 @@ in a controlled settings such as laboratories or workshops.
    $ touch ./.env   (bash)
    $ type nul > .env    (Windows)
    ```
-4. Create a new supabase project and retrieve the associated URL and KEY  
+4. Option A: Database already made
+     - Speak to relevant person to retrieve Supabase URL and KEY  
+   Option B: No known database  
+     - Create a new supabase project and retrieve the associated URL and KEY
+       
 5. Append and save the URL and KEY into the .env file in the form of    
    ```
    SUPABASE_URL=your_url_here
