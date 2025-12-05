@@ -24,7 +24,7 @@ in a controlled settings such as laboratories or workshops.
    ```
    $ pip install -r requirements.txt
    ```
-4. Create an .env file in your project directory for initilasing the database  
+4. Create an .env file in your project directory for initialising the database  
    ```
    $ touch ./.env   (bash)
    $ type nul > .env    (Windows)
