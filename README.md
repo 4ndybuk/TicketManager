@@ -30,7 +30,10 @@ in a controlled settings such as laboratories or workshops.
    $ type nul > .env    (Windows)
    ```
 4. Option A: Database already made  
-     - Speak to relevant person to retrieve Supabase URL and KEY  
+     - Speak to relevant person to retrieve Supabase URL and KEY
+      ```
+      https://supabase.com
+      ```
 5. Option B: No known database  
      - Create a new supabase project and retrieve the associated URL and KEY
        
