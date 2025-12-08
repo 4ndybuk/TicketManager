@@ -139,6 +139,7 @@ class TableController:
         id_item = self.table.item(row_position, 6)
         row_id = int(id_item.text())
         details = DetailsDialog(row_id, self.client)
+        details.resize(400,400)
         details.exec()
     
     def mail_to(self, row_position):
