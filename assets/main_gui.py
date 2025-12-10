@@ -288,7 +288,7 @@ class Ui_MainWindow(object):
         self.userInput.setInputMask("")
         self.userInput.setText("")
         self.quitButton.setText(QCoreApplication.translate("MainWindow", u"Quit", None))
-        self.bottomTitle.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">University of Liverpool - LSDC - ATLAS ITk</span></p><p align=\"center\"><span style=\" font-size:14pt;\">v1.0.0</span></p></body></html>", None))
+        self.bottomTitle.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">University of Liverpool - LSDC - ATLAS ITk</span></p><p align=\"center\"><span style=\" font-size:14pt;\">v1.1.0</span></p></body></html>", None))
         self.createButton.setText(QCoreApplication.translate("MainWindow", u"Create Ticket", None))
         self.logoutButton.setText(QCoreApplication.translate("MainWindow", u"Log Out", None))
         self.refreshButton.setText(QCoreApplication.translate("MainWindow", u"Refresh", None))
