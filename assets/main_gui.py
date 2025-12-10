@@ -11,7 +11,7 @@
 from PySide6.QtCore import (QCoreApplication, QMetaObject, QRect, QSize, Qt)
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import (QLabel, QLineEdit, QMenuBar, QPushButton,
-    QStackedWidget, QStatusBar, QTableWidget, QWidget)
+    QStackedWidget, QStatusBar, QTableWidget, QWidget, QTabWidget, QHeaderView)
 import background_rc
 
 # Stylesheet for the interface buttons
@@ -77,18 +77,86 @@ lineedit_style = """
                 }
                 """
 
+table_style = """
+                QTableWidget {
+                    background: transparent;   
+                    background-color: rgba(255, 255, 255, 0.7);
+                    padding: 1px;
+                }                    
+                QTableWidget::item:selected {
+                    background: transparent; 
+                    background-color: rgba(177, 180, 180, 0.6);
+                    padding: 2px
+                }                 
+                QTableWidget::item:focus {
+                    background-color: rgba(177, 180, 180, 0.6);
+                    outline: none;                      
+                }                   
+                QScrollBar:vertical {
+                    background: transparent;
+                    width: 8px;
+                    margin: 0px;
+                }
+                QScrollBar::handle:vertical {
+                    background: rgba(0, 0, 0, 0.5);
+                    border-radius: 4px;
+                }
+                QScrollBar::handle:vertical:hover {
+                    background: rgba(0, 0, 0, 0.8);
+                }
+                QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                    border: none;
+                    background: none;
+                }
+                QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+                    background: none;
+                }
+                """
+
 class Ui_MainWindow(object):
+    # TABLE GENERIC FUNCTIONS
+    def set_table(self, table: QTableWidget):
+        # Table template for the tabs
+        if (table.columnCount() < 5):
+            table.setColumnCount(8)
+        table.setGeometry(QRect(-6, 1, 814, 600))
+        font = QFont("JetBrains Mono NL")
+        table.setFont(font)
+        table.setStyleSheet(table_style)
+        table.setFocusPolicy(Qt.NoFocus)
+        table.setRowCount(0)
+        table.setColumnCount(8)
+        table.horizontalHeader().setCascadingSectionResizes(False)
+        table.horizontalHeader().setDefaultSectionSize(114)
+        table.horizontalHeader().setStretchLastSection(False)
+        table.verticalHeader().setFixedWidth(6)
+        table.setShowGrid(False)
+        header = table.horizontalHeader()
+        header.setFont(font)
+        header.setSectionResizeMode(QHeaderView.Fixed)
+    
+    def set_button(self, button: QPushButton, qrect: QRect):
+        # Create button template
+        # qrect = (left, top, width, height)
+        button.setGeometry(qrect)
+        button.setFont(QFont("JetBrains Mono NL"))
+        button.setStyleSheet(buttonstyle)
+        button.setCheckable(True)
+        button.setChecked(False)
+        button.setAutoDefault(False)
+        button.setFlat(False)
+
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(800, 600)
-        MainWindow.setMinimumSize(QSize(800, 600))
-        MainWindow.setMaximumSize(QSize(800, 600))
+        MainWindow.resize(800, 630)
+        MainWindow.setMinimumSize(QSize(800, 630))
+        MainWindow.setMaximumSize(QSize(800, 630))
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.stackedWidget = QStackedWidget(self.centralwidget)
         self.stackedWidget.setObjectName(u"stackedWidget")
-        self.stackedWidget.setGeometry(QRect(-1, -1, 801, 601))
+        self.stackedWidget.setGeometry(QRect(-1, 1, 800, 600))
         font = QFont()
         font.setFamilies([u"JetBrains Mono NL"])
         self.stackedWidget.setFont(font)
@@ -169,98 +237,97 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.loginPage)
         ################################################################
         # TABLE PAGE
+        self.tableTabs = QTabWidget()
+        self.tableTabs.resize(800,600)
+        self.tableTabs.setStyleSheet("background: transparent;")
+        # -----------/ FIRST TAB /-------------
         self.workPage = QWidget()
         self.workPage.setObjectName(u"workPage")
+        
+        # Table
         self.tableWidget = QTableWidget(self.workPage)
-        if (self.tableWidget.columnCount() < 5):
-            self.tableWidget.setColumnCount(8)
         self.tableWidget.setObjectName(u"tableWidget")
-        self.tableWidget.setGeometry(QRect(-5, 1, 811, 501))
-        self.tableWidget.setFont(font)
-        self.tableWidget.setStyleSheet("""
-                QTableWidget {
-                    background: transparent;   
-                    background-color: rgba(255, 255, 255, 0.7);
-                    padding: 1px;
-                }                    
-                QTableWidget::item:selected {
-                    background: transparent; 
-                    background-color: rgba(177, 180, 180, 0.6);
-                    padding: 2px
-                }                 
-                QTableWidget::item:focus {
-                    background-color: rgba(177, 180, 180, 0.6);
-                    outline: none;                      
-                }                   
-                QScrollBar:vertical {
-                    background: transparent;
-                    width: 8px;
-                    margin: 0px;
-                }
-                QScrollBar::handle:vertical {
-                    background: rgba(0, 0, 0, 0.5);
-                    border-radius: 4px;
-                }
-                QScrollBar::handle:vertical:hover {
-                    background: rgba(0, 0, 0, 0.8);
-                }
-                QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-                    border: none;
-                    background: none;
-                }
-                QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
-                    background: none;
-                }
-                """)
-        self.tableWidget.setFocusPolicy(Qt.NoFocus)
-        self.tableWidget.setRowCount(0)
-        self.tableWidget.setColumnCount(8)
+        self.set_table(self.tableWidget)
         self.tableWidget.setHorizontalHeaderLabels(["Ticket Name", "Ticket ID", "Urgency", 
                                                     "Location", "Status", "Details", "", "Report"])
-        self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
-        self.tableWidget.horizontalHeader().setDefaultSectionSize(114)
-        self.tableWidget.horizontalHeader().setStretchLastSection(False)
-        self.tableWidget.verticalHeader().setFixedWidth(6)
-        self.tableWidget.setShowGrid(False)
-        header = self.tableWidget.horizontalHeader()
-        header.setFont(font)
-        self.createButton = QPushButton(self.workPage)
-        self.createButton.setObjectName(u"createButton")
-        self.createButton.setGeometry(QRect(200, 520, 161, 31))
-        self.createButton.setFont(font)
-        self.createButton.setStyleSheet(buttonstyle)
-        self.createButton.setCheckable(True)
-        self.createButton.setChecked(False)
-        self.createButton.setAutoDefault(False)
-        self.createButton.setFlat(False)
-        self.refreshButton = QPushButton(self.workPage)
-        self.refreshButton.setObjectName(u"refreshButton")
-        self.refreshButton.setGeometry(QRect(435, 520, 121, 31))
-        self.refreshButton.setFont(font)
-        self.refreshButton.setStyleSheet(buttonstyle)
-        self.refreshButton.setCheckable(True)
-        self.refreshButton.setChecked(False)
-        self.refreshButton.setAutoDefault(False)
-        self.refreshButton.setFlat(False)
-        self.logoutButton = QPushButton(self.workPage)
-        self.logoutButton.setObjectName(u"logoutButton")
-        self.logoutButton.setGeometry(QRect(10, 520, 121, 31))
-        self.logoutButton.setFont(font)
-        self.logoutButton.setStyleSheet(buttonstyle)
-        self.logoutButton.setCheckable(True)
-        self.logoutButton.setChecked(False)
-        self.logoutButton.setAutoDefault(False)
-        self.logoutButton.setFlat(False)
-        self.deleteButton = QPushButton(self.workPage)
-        self.deleteButton.setObjectName(u"deleteButton")
-        self.deleteButton.setGeometry(QRect(630, 520, 161, 31))
-        self.deleteButton.setFont(font)
-        self.deleteButton.setStyleSheet(buttonstyle)
-        self.deleteButton.setCheckable(True)
-        self.deleteButton.setChecked(False)
-        self.deleteButton.setAutoDefault(False)
-        self.deleteButton.setFlat(False)
-        self.stackedWidget.addWidget(self.workPage)
+        # Buttons
+        self.create1Button = QPushButton(self.workPage)
+        self.create1Button.setObjectName(u"create1Button")
+        self.set_button(self.create1Button, QRect(200, 520, 161, 31))
+
+        self.refresh1Button = QPushButton(self.workPage)
+        self.refresh1Button.setObjectName(u"refreshButton")
+        self.set_button(self.refresh1Button, QRect(422, 520, 121, 31))
+
+        self.logout1Button = QPushButton(self.workPage)
+        self.logout1Button.setObjectName(u"logoutButton")
+        self.set_button(self.logout1Button, QRect(30, 520, 121, 31))
+        
+        self.delete1Button = QPushButton(self.workPage)
+        self.delete1Button.setObjectName(u"deleteButton")
+        self.set_button(self.delete1Button, QRect(600, 520, 161, 31))
+        
+        # Add the table to the tab
+        self.tableTabs.addTab(self.workPage, "Safety")
+
+        # -----------/ SECOND TAB /-------------
+        self.generalPage = QWidget()
+        self.generalPage.setObjectName(u"generalPage")
+
+        # Table
+        self.table_2_Widget = QTableWidget(self.generalPage)
+        self.table_2_Widget.setObjectName(u"table_2_Widget")
+        self.set_table(self.table_2_Widget)
+        self.table_2_Widget.setHorizontalHeaderLabels(["Ticket Name", "Ticket ID", "Urgency", 
+                                                    "Location", "Status", "Details", "", "Report"])
+        # Buttons
+        self.create2Button = QPushButton(self.generalPage)
+        self.create2Button.setObjectName(u"create2Button")
+        self.set_button(self.create2Button, QRect(200, 520, 161, 31))
+
+        self.refresh2Button = QPushButton(self.generalPage)
+        self.refresh2Button.setObjectName(u"refresh2Button")
+        self.set_button(self.refresh2Button, QRect(422, 520, 121, 31))
+
+        self.logout2Button = QPushButton(self.generalPage)
+        self.logout2Button.setObjectName(u"logout2Button")
+        self.set_button(self.logout2Button, QRect(30, 520, 121, 31))
+        
+        self.delete2Button = QPushButton(self.generalPage)
+        self.delete2Button.setObjectName(u"delete2Button")
+        self.set_button(self.delete2Button, QRect(600, 520, 161, 31))
+
+        self.tableTabs.addTab(self.generalPage, "General")
+        # -----------/ THIRD TAB /-------------
+        self.stockPage = QWidget()
+        self.stockPage.setObjectName(u"stockPage")
+        
+        # Table
+        self.table_3_Widget = QTableWidget(self.stockPage)
+        self.table_3_Widget.setObjectName(u"table_3_Widget")
+        self.set_table(self.table_3_Widget)
+        self.table_3_Widget.setHorizontalHeaderLabels(["Ticket Name", "Ticket ID", "Urgency", 
+                                                    "Location", "Status", "Details", "", "Report"])
+        # Buttons
+        self.create3Button = QPushButton(self.stockPage)
+        self.create3Button.setObjectName(u"create3Button")
+        self.set_button(self.create3Button, QRect(200, 520, 161, 31))
+
+        self.refresh3Button = QPushButton(self.stockPage)
+        self.refresh3Button.setObjectName(u"refresh3Button")
+        self.set_button(self.refresh3Button, QRect(422, 520, 121, 31))
+
+        self.logout3Button = QPushButton(self.stockPage)
+        self.logout3Button.setObjectName(u"logout3Button")
+        self.set_button(self.logout3Button, QRect(30, 520, 121, 31))
+        
+        self.delete3Button = QPushButton(self.stockPage)
+        self.delete3Button.setObjectName(u"delete3Button")
+        self.set_button(self.delete3Button, QRect(600, 520, 161, 31))
+
+        self.tableTabs.addTab(self.stockPage, "Stock")
+        self.stackedWidget.addWidget(self.tableTabs)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
@@ -288,9 +355,17 @@ class Ui_MainWindow(object):
         self.userInput.setInputMask("")
         self.userInput.setText("")
         self.quitButton.setText(QCoreApplication.translate("MainWindow", u"Quit", None))
-        self.bottomTitle.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">University of Liverpool - LSDC - ATLAS ITk</span></p><p align=\"center\"><span style=\" font-size:14pt;\">v1.1.0</span></p></body></html>", None))
-        self.createButton.setText(QCoreApplication.translate("MainWindow", u"Create Ticket", None))
-        self.logoutButton.setText(QCoreApplication.translate("MainWindow", u"Log Out", None))
-        self.refreshButton.setText(QCoreApplication.translate("MainWindow", u"Refresh", None))
-        self.deleteButton.setText(QCoreApplication.translate("MainWindow", u"Delete Ticket", None))
+        self.bottomTitle.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">University of Liverpool - LSDC - ATLAS ITk</span></p><p align=\"center\"><span style=\" font-size:14pt;\">v1.2.0</span></p></body></html>", None))
+        self.create1Button.setText(QCoreApplication.translate("MainWindow", u"Create Ticket", None))
+        self.logout1Button.setText(QCoreApplication.translate("MainWindow", u"Log Out", None))
+        self.refresh1Button.setText(QCoreApplication.translate("MainWindow", u"Refresh", None))
+        self.delete1Button.setText(QCoreApplication.translate("MainWindow", u"Delete Ticket", None))
+        self.create2Button.setText(QCoreApplication.translate("MainWindow", u"Create Ticket", None))
+        self.logout2Button.setText(QCoreApplication.translate("MainWindow", u"Log Out", None))
+        self.refresh2Button.setText(QCoreApplication.translate("MainWindow", u"Refresh", None))
+        self.delete2Button.setText(QCoreApplication.translate("MainWindow", u"Delete Ticket", None))
+        self.create3Button.setText(QCoreApplication.translate("MainWindow", u"Create Ticket", None))
+        self.logout3Button.setText(QCoreApplication.translate("MainWindow", u"Log Out", None))
+        self.refresh3Button.setText(QCoreApplication.translate("MainWindow", u"Refresh", None))
+        self.delete3Button.setText(QCoreApplication.translate("MainWindow", u"Delete Ticket", None))
     # retranslateUi

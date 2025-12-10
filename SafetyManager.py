@@ -51,11 +51,29 @@ class SafetyManager(QMainWindow):
         self.table = self.ui.tableWidget
         self.table.setColumnHidden(6, True)
 
-        # Table Page Setup
-        self.ui.createButton.clicked.connect(self.create_ticket)
-        self.ui.logoutButton.clicked.connect(self.signout)
-        self.ui.deleteButton.clicked.connect(self.delete_row)
-        self.ui.refreshButton.clicked.connect(self.refresh)
+        self.table2 = self.ui.table_2_Widget
+        self.table2.setColumnHidden(6, True)
+
+        self.table3 = self.ui.table_3_Widget
+        self.table3.setColumnHidden(6, True)
+
+        # Table 1 Page Setup (Safety)
+        self.ui.create1Button.clicked.connect(lambda: self.create_ticket(self.table_control))
+        self.ui.logout1Button.clicked.connect(self.signout)
+        self.ui.delete1Button.clicked.connect(lambda: self.delete_row(self.table, 1))
+        self.ui.refresh1Button.clicked.connect(lambda: self.refresh(self.table, 1))
+
+        # Table 2 Page Setup (General)
+        self.ui.create2Button.clicked.connect(lambda: self.create_ticket(self.table_control2))
+        self.ui.logout2Button.clicked.connect(self.signout)
+        self.ui.delete2Button.clicked.connect(lambda: self.delete_row(self.table2, 2))
+        self.ui.refresh2Button.clicked.connect(lambda: self.refresh(self.table2, 2))
+
+        # Table 3 Page Setup (Stock)
+        self.ui.create3Button.clicked.connect(lambda: self.create_ticket(self.table_control3))
+        self.ui.logout3Button.clicked.connect(self.signout)
+        self.ui.delete3Button.clicked.connect(lambda: self.delete_row(self.table3, 3))
+        self.ui.refresh3Button.clicked.connect(lambda: self.refresh(self.table3, 3))
     
     def login(self):
         # Login to the database and return client
@@ -67,42 +85,48 @@ class SafetyManager(QMainWindow):
 
         # Fetch all data from the database
         self.all_data = self.client.table("SafetyManager").select("*", count='exact').execute().data
-        self.table_control = TableController(self.ui.tableWidget, self.client, self.all_data)
+        self.table_control = TableController(self.table, self.client, self.all_data, 1)
+        self.table_control2 = TableController(self.table2, self.client, self.all_data, 2)
+        self.table_control3 = TableController(self.table3, self.client, self.all_data, 3)
         self.table_control.load_table()
+        self.table_control2.load_table()
+        self.table_control3.load_table()
 
     def signout(self):
         # Logout from the database~
         logout(self.next_page)
         self.ui.userInput.clear()
         self.ui.passInput.clear()
-        self.ui.tableWidget.clear()
+        self.table.setRowCount(0)
+        self.table2.setRowCount(0)
+        self.table3.setRowCount(0)
         self.ui.userInput.setFocus()
     
-    def create_ticket(self):
+    def create_ticket(self, table_control):
         # Creating a table row for the ticket
-        self.table_control.create_ticket()
+        table_control.create_ticket()
 
-    def refresh(self):
+    def refresh(self, table: QTableWidget, tab_no: int):
         self.all_data = self.client.table("SafetyManager").select("*", count='exact').execute().data
-        self.ui.tableWidget.setRowCount(0)
-        self.table_control = TableController(self.ui.tableWidget, self.client, self.all_data)
-        self.table_control.load_table()
+        table.setRowCount(0)
+        self.table_controller = TableController(table, self.client, self.all_data, tab_no)
+        self.table_controller.load_table()
     
-    def delete_row(self):
-        item = self.ui.tableWidget.currentItem()
+    def delete_row(self, table: QTableWidget, tab_no: int):
+        item = table.currentItem()
         if item is None:
             QMessageBox.critical(None, "Delete Ticket", "Click on the row to delete it", QMessageBox.Ok)
             return
         
         # Delete row from the table and database
         row = item.row()
-        id_item = self.table.item(row, 6)
+        id_item = table.item(row, 6)
         row_id = int(id_item.text())
         self.client.table("SafetyManager").delete().eq("id", row_id).execute()
-        self.table.removeRow(row)
+        table.removeRow(row)
 
         # Refresh the table to maintain proper button binding
-        self.refresh()
+        self.refresh(table, tab_no)
 
 def main():
     app = QApplication(sys.argv)

@@ -20,10 +20,11 @@ import webbrowser
 import urllib.parse
 
 class TableController:
-    def __init__(self, table: QTableWidget, client: supabase.Client, data):
+    def __init__(self, table: QTableWidget, client: supabase.Client, data, tab_no: int):
         self.table = table
         self.client = client
         self.data = data
+        self.tab_no = tab_no
 
     def create_ticket(self):
         # Add a new row at the end of the table
@@ -69,7 +70,8 @@ class TableController:
             "Cleanroom Location": location_str,
             "Status": "Active",
             "Details": "",
-            "History": ""
+            "History": "",
+            "Tab": self.tab_no
         }
 
         # Insert row into the database
@@ -222,32 +224,33 @@ class TableController:
 
         self.row_position = 0
         for row in self.data:
-            status_button = QPushButton()
-            status_button.setCheckable(True)
-            details_button = QPushButton()
-            report_button = QPushButton()
+            if row["Tab"] == self.tab_no:
+                status_button = QPushButton()
+                status_button.setCheckable(True)
+                details_button = QPushButton()
+                report_button = QPushButton()
 
-            self.table.insertRow(self.row_position)
-            self.table.setItem(self.row_position, 6, QTableWidgetItem(str(row["id"])))
+                self.table.insertRow(self.row_position)
+                self.table.setItem(self.row_position, 6, QTableWidgetItem(str(row["id"])))
 
-            if row["Status"] == "Active":
-                self.trigger_button(status_button, row["Status"], "green", 
-                                    lambda _, r = self.row_position: self.toggle_status(r))
-            else:
-                self.trigger_button(status_button, row["Status"], "gray", 
-                                    lambda _, r = self.row_position: self.toggle_status(r))
+                if row["Status"] == "Active":
+                    self.trigger_button(status_button, row["Status"], "green", 
+                                        lambda _, r = self.row_position: self.toggle_status(r))
+                else:
+                    self.trigger_button(status_button, row["Status"], "gray", 
+                                        lambda _, r = self.row_position: self.toggle_status(r))
 
-            self.trigger_button(details_button, "Details", "black", lambda _, r = self.row_position: self.open_details(r))
-            self.trigger_button(report_button, "Report", "black", lambda _, r = self.row_position: self.mail_to(r))
-            
-            self.table.setItem(self.row_position, 0, item_and_align(row["Ticket Name"]))
-            self.table.setItem(self.row_position, 1, item_and_align(row["Ticket ID"]))
-            self.table.setItem(self.row_position, 2, item_and_align(row["Urgency"]))
-            self.table.setItem(self.row_position, 3, item_and_align(row["Cleanroom Location"]))
-            self.table.setCellWidget(self.row_position, 4, status_button)
-            self.table.setCellWidget(self.row_position, 5, details_button)
-            self.table.setCellWidget(self.row_position, 7, report_button)
+                self.trigger_button(details_button, "Details", "black", lambda _, r = self.row_position: self.open_details(r))
+                self.trigger_button(report_button, "Report", "black", lambda _, r = self.row_position: self.mail_to(r))
+                
+                self.table.setItem(self.row_position, 0, item_and_align(row["Ticket Name"]))
+                self.table.setItem(self.row_position, 1, item_and_align(row["Ticket ID"]))
+                self.table.setItem(self.row_position, 2, item_and_align(row["Urgency"]))
+                self.table.setItem(self.row_position, 3, item_and_align(row["Cleanroom Location"]))
+                self.table.setCellWidget(self.row_position, 4, status_button)
+                self.table.setCellWidget(self.row_position, 5, details_button)
+                self.table.setCellWidget(self.row_position, 7, report_button)
 
-            self.row_position += 1
+                self.row_position += 1
             
         self.table.setSortingEnabled(True)
