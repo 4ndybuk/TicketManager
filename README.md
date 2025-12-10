@@ -1,7 +1,7 @@
-# Safety Manager  
-GUI program with active database to submit and control the flow  
-of health and safety related queries. Ideal for monitoring issues  
-in a controlled settings such as laboratories or workshops.
+# Ticket Manager 
+GUI program with active database to submit and control the flow of workplace-management  
+related queries e.g health & safety, general issues and stock management. Ideal for monitoring    
+in controlled settings such as laboratories or workshops.  
 
 ## Details
 ![PySide6](https://img.shields.io/badge/PySide6-6.10.1-brightgreen)  
@@ -49,7 +49,7 @@ in a controlled settings such as laboratories or workshops.
 
 ## Usage
 1. The program requires an existing database project and created authorised user with Supabase
-2. Create, delete and update H&S tickets that can be managed across accessible users
+2. Create, delete and update tickets that can be managed across accessible users
 3. Single click buttons in the row provide the following actions:  
     - Toggle ticket status between "Active" and "Completed"
     - Update and store ticket information with "Details"

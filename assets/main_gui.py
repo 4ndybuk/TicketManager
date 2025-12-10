@@ -346,8 +346,8 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Safety Manager", None))
-        self.appTitle.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:72pt;\">SAFETY MANAGER</span></p></body></html>", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Ticket Manager", None))
+        self.appTitle.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:72pt;\">TICKET MANAGER</span></p></body></html>", None))
         self.loginButton.setText(QCoreApplication.translate("MainWindow", u"Log In", None))
         self.usernameLabel.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:18pt; font-weight:700;\">Username</span></p></body></html>", None))
         self.passInput.setText("")
