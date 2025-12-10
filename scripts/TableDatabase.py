@@ -83,7 +83,8 @@ class TableController:
         # Storing the ID in a hidden column
         self.table.setItem(row_position, 6, QTableWidgetItem(str(row_id)))
 
-        # Update the Ticket ID into the Details history
+        # Update the Ticket Name and ID into the Details history
+        self.client.rpc("append_signature", {"row_id": row_id, "extra_text": str(f"Ticket Name: {ticket_str}")}).execute()
         self.client.rpc("append_signature", {"row_id": row_id, "extra_text": str(f"Ticket ID: {id_str}")}).execute()
 
         # Button functions
