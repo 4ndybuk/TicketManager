@@ -44,7 +44,7 @@ in controlled settings such as laboratories or workshops.
    ```
 7. Run the program with a supabase authorised user  
    ```
-   $ python SafetyManager.py
+   $ python TicketManager.py
    ```
 
 ## Usage
