@@ -48,6 +48,8 @@ class TableController:
         id_str = self.generate_id()
         location_str = self.input_dialog("Cleanroom Location", "Cleanroom location e.g. G15:")
         urgency_str = self.choice_dialog()
+        project_str = self.project_dialog()
+        creator_str = self.input_dialog("Creator", "Ticket created by:")
 
         # Defining table text items
         ticket_name = QTableWidgetItem(ticket_str)
@@ -71,6 +73,8 @@ class TableController:
             "Status": "Active",
             "Details": "",
             "History": "",
+            "Project": project_str,
+            "Creator": creator_str,
             "Tab": self.tab_no
         }
 
@@ -83,9 +87,11 @@ class TableController:
         # Storing the ID in a hidden column
         self.table.setItem(row_position, 6, QTableWidgetItem(str(row_id)))
 
-        # Update the Ticket Name and ID into the Details history
+        # Update the Ticket Name, ID, Project and Creator into the Details history
+        self.client.rpc("append_signature", {"row_id": row_id, "extra_text": str(f"Created By: {creator_str}")}).execute()
         self.client.rpc("append_signature", {"row_id": row_id, "extra_text": str(f"Ticket Name: {ticket_str}")}).execute()
         self.client.rpc("append_signature", {"row_id": row_id, "extra_text": str(f"Ticket ID: {id_str}")}).execute()
+        self.client.rpc("append_signature", {"row_id": row_id, "extra_text": str(f"Project: {project_str}")}).execute()
 
         # Button functions
         self.trigger_button(status_button, "Active", "green", lambda _, r = row_position: self.toggle_status(r))
@@ -123,6 +129,15 @@ class TableController:
         # Choose the urgency level of the ticket
         items = ["Urgent", "Medium", "Low"]
         item, ok = QInputDialog.getItem(None, "Urgency Selection", "Choose the urgency:", items, 0, False)
+        if ok and item:
+            return item
+        return None
+    
+    def project_dialog(self):
+        # Choose the project associated with the ticket
+        items = ["ATLAS Pixel", "ATLAS Strips", "ATLAS Staves", "ATLAS Pixel Mechanics",
+                 "DarkSide", "General Cleanroom", "Wirebonding", "Electronics", "Workshop"]
+        item, ok = QInputDialog.getItem(None, "Project Selection", "Choose the project:", items, 0, False)
         if ok and item:
             return item
         return None
@@ -219,6 +234,7 @@ class TableController:
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         def item_and_align(item):
+            # Create table widget and align centrally
             widget_item = QTableWidgetItem(item)
             widget_item.setTextAlignment(Qt.AlignCenter)
             return widget_item
