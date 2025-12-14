@@ -11,7 +11,7 @@
 from PySide6.QtCore import (QCoreApplication, QMetaObject, QRect, QSize, Qt)
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import (QLabel, QLineEdit, QMenuBar, QPushButton,
-    QStackedWidget, QStatusBar, QTableWidget, QWidget, QTabWidget, QHeaderView)
+    QStackedWidget, QStatusBar, QTableWidget, QWidget, QTabWidget, QHeaderView, QToolBar)
 import background_rc
 
 # Stylesheet for the interface buttons
@@ -110,6 +110,22 @@ table_style = """
                 }
                 QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
                     background: none;
+                }
+                """
+
+toolbar_style = """
+                QToolBar {
+                    background: none
+                }
+                QToolButton {
+                    background-color: lightgray;
+                    border: 1px lightgray;
+                    padding: 2px;
+                    background: none;
+                    border-radius: 5px
+                }
+                QToolButton:hover {
+                    background-color: darkgray;
                 }
                 """
 
@@ -253,19 +269,19 @@ class Ui_MainWindow(object):
         # Buttons
         self.create1Button = QPushButton(self.workPage)
         self.create1Button.setObjectName(u"create1Button")
-        self.set_button(self.create1Button, QRect(200, 520, 161, 31))
+        self.set_button(self.create1Button, QRect(200, 510, 161, 31))
 
         self.refresh1Button = QPushButton(self.workPage)
         self.refresh1Button.setObjectName(u"refreshButton")
-        self.set_button(self.refresh1Button, QRect(422, 520, 121, 31))
+        self.set_button(self.refresh1Button, QRect(422, 510, 121, 31))
 
         self.logout1Button = QPushButton(self.workPage)
         self.logout1Button.setObjectName(u"logoutButton")
-        self.set_button(self.logout1Button, QRect(30, 520, 121, 31))
+        self.set_button(self.logout1Button, QRect(30, 510, 121, 31))
         
         self.delete1Button = QPushButton(self.workPage)
         self.delete1Button.setObjectName(u"deleteButton")
-        self.set_button(self.delete1Button, QRect(600, 520, 161, 31))
+        self.set_button(self.delete1Button, QRect(600, 510, 161, 31))
         
         # Add the table to the tab
         self.tableTabs.addTab(self.workPage, "Safety")
@@ -283,19 +299,19 @@ class Ui_MainWindow(object):
         # Buttons
         self.create2Button = QPushButton(self.generalPage)
         self.create2Button.setObjectName(u"create2Button")
-        self.set_button(self.create2Button, QRect(200, 520, 161, 31))
+        self.set_button(self.create2Button, QRect(200, 510, 161, 31))
 
         self.refresh2Button = QPushButton(self.generalPage)
         self.refresh2Button.setObjectName(u"refresh2Button")
-        self.set_button(self.refresh2Button, QRect(422, 520, 121, 31))
+        self.set_button(self.refresh2Button, QRect(422, 510, 121, 31))
 
         self.logout2Button = QPushButton(self.generalPage)
         self.logout2Button.setObjectName(u"logout2Button")
-        self.set_button(self.logout2Button, QRect(30, 520, 121, 31))
+        self.set_button(self.logout2Button, QRect(30, 510, 121, 31))
         
         self.delete2Button = QPushButton(self.generalPage)
         self.delete2Button.setObjectName(u"delete2Button")
-        self.set_button(self.delete2Button, QRect(600, 520, 161, 31))
+        self.set_button(self.delete2Button, QRect(600, 510, 161, 31))
 
         self.tableTabs.addTab(self.generalPage, "General")
         # -----------/ THIRD TAB /-------------
@@ -311,19 +327,19 @@ class Ui_MainWindow(object):
         # Buttons
         self.create3Button = QPushButton(self.stockPage)
         self.create3Button.setObjectName(u"create3Button")
-        self.set_button(self.create3Button, QRect(200, 520, 161, 31))
+        self.set_button(self.create3Button, QRect(200, 510, 161, 31))
 
         self.refresh3Button = QPushButton(self.stockPage)
         self.refresh3Button.setObjectName(u"refresh3Button")
-        self.set_button(self.refresh3Button, QRect(422, 520, 121, 31))
+        self.set_button(self.refresh3Button, QRect(422, 510, 121, 31))
 
         self.logout3Button = QPushButton(self.stockPage)
         self.logout3Button.setObjectName(u"logout3Button")
-        self.set_button(self.logout3Button, QRect(30, 520, 121, 31))
+        self.set_button(self.logout3Button, QRect(30, 510, 121, 31))
         
         self.delete3Button = QPushButton(self.stockPage)
         self.delete3Button.setObjectName(u"delete3Button")
-        self.set_button(self.delete3Button, QRect(600, 520, 161, 31))
+        self.set_button(self.delete3Button, QRect(600, 510, 161, 31))
 
         self.tableTabs.addTab(self.stockPage, "Stock")
         self.stackedWidget.addWidget(self.tableTabs)

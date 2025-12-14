@@ -9,9 +9,9 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'assets'))
 
 from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QClipboard
+from PySide6.QtGui import QClipboard, QAction, QFont
 
-from main_gui import Ui_MainWindow # type: ignore
+from main_gui import Ui_MainWindow, toolbar_style # type: ignore
 from Login import login, logout # type: ignore
 from TableDatabase import TableController # type: ignore
 
@@ -28,8 +28,45 @@ class SafetyManager(QMainWindow):
         # Set up system wide clipboard
         self.clipboard = clipboard
 
+        # Set font
+        font = QFont("JetBrains Mono NL")
+
+        # Set up a toolbar
+        self.toolbar = QToolBar("Toolbar")
+        self.toolbar.setMovable(False)
+        self.toolbar.setIconSize(QSize(12,12))
+        self.toolbar.setStyleSheet(toolbar_style)
+        self.addToolBar(Qt.TopToolBarArea, self.toolbar)
+        self.toolbar.hide()
+
+        # Default API variables
         self.client = None
         self.all_data = None
+
+        # Toolbar actions
+        # Search tickets by name
+        search_name = QAction("Search by Name", self)
+        search_name.triggered.connect(lambda: self.filter_table("creator"))
+        search_name.setFont(font)
+        self.toolbar.addAction(search_name)
+
+        # Search ticket by project
+        search_project = QAction("Search by Project", self)
+        search_project.triggered.connect(lambda: self.filter_table("project"))
+        search_project.setFont(font)
+        self.toolbar.addAction(search_project)
+
+        # Search tickets by location
+        search_location = QAction("Search by Location", self)
+        search_location.triggered.connect(lambda: self.filter_table("location"))
+        search_location.setFont(font)
+        self.toolbar.addAction(search_location)
+
+        # Reset all search filters
+        show_all = QAction("Show All", self)
+        show_all.triggered.connect(self.show_all_action)
+        show_all.setFont(font)
+        self.toolbar.addAction(show_all)
 
         if DEBUG:
             page = self.ui.stackedWidget.setCurrentIndex(1)
@@ -91,10 +128,12 @@ class SafetyManager(QMainWindow):
         self.table_control.load_table()
         self.table_control2.load_table()
         self.table_control3.load_table()
+        self.toolbar.show()
 
     def signout(self):
         # Logout from the database~
         logout(self.next_page)
+        self.toolbar.hide()
         self.ui.userInput.clear()
         self.ui.passInput.clear()
         self.table.setRowCount(0)
@@ -108,9 +147,12 @@ class SafetyManager(QMainWindow):
 
     def refresh(self, table: QTableWidget, tab_no: int):
         self.all_data = self.client.table("SafetyManager").select("*", count='exact').execute().data
+        table.clearContents()
         table.setRowCount(0)
+        table.setSortingEnabled(False)
         self.table_controller = TableController(table, self.client, self.all_data, tab_no)
         self.table_controller.load_table()
+        table.setSortingEnabled(True)
     
     def delete_row(self, table: QTableWidget, tab_no: int):
         item = table.currentItem()
@@ -127,6 +169,56 @@ class SafetyManager(QMainWindow):
 
         # Refresh the table to maintain proper button binding
         self.refresh(table, tab_no)
+    
+    def show_all_action(self):
+        self.refresh(self.table, 1)
+        self.refresh(self.table2, 2)
+        self.refresh(self.table3, 3)
+    
+    def filter_table(self, filter_name: str):
+        # Filter the table based on the search preference
+        match filter_name:
+            case "creator":
+                filter_str = self.table_control.input_dialog("Search", "Search by creator name:")
+                dict_str = "Creator"
+            case "project":
+                filter_str = self.table_control.project_dialog()
+                dict_str = "Project"
+            case "location":
+                filter_str = self.table_control.input_dialog("Search", "Search by location e.g G15:")
+                dict_str = "Cleanroom Location"
+            case _:
+                return
+        
+        if filter_str == "":
+            QMessageBox.critical(None, "Filter Error", "Please provide a valid input", QMessageBox.Ok)
+            return
+        elif filter_str is None:
+            return
+            
+        # Load the full data for repeated filtering
+        self.all_data = self.client.table("SafetyManager").select("*", count='exact').execute().data 
+        # Filter the data
+        filtered_list = []
+        for row in self.all_data:
+            if row[dict_str] == str(filter_str):
+                filtered_list.append(row)
+        self.all_data = filtered_list
+
+        if len(self.all_data) < 1:
+            QMessageBox.critical(None, "Filter Info", "No tickets found!", QMessageBox.Ok)
+            return
+        else:
+            # Clear tables and load filtered data
+            self.table.setRowCount(0)
+            self.table2.setRowCount(0)
+            self.table3.setRowCount(0)
+            self.table_control = TableController(self.table, self.client, self.all_data, 1)
+            self.table_control2 = TableController(self.table2, self.client, self.all_data, 2)
+            self.table_control3 = TableController(self.table3, self.client, self.all_data, 3)
+            self.table_control.load_table()
+            self.table_control2.load_table()
+            self.table_control3.load_table()
 
 def main():
     app = QApplication(sys.argv)
