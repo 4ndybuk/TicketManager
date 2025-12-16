@@ -18,7 +18,7 @@ in controlled settings such as laboratories or workshops.
 ## Installation
 1. Run in your terminal  
    ```
-   git clone https://github.com/4ndybuk/SafetyManager
+   git clone https://github.com/4ndybuk/TicketManager
    ```
 2. Go to the cloned directory and install dependancies with    
    ```
@@ -50,7 +50,8 @@ in controlled settings such as laboratories or workshops.
 ## Usage
 1. The program requires an existing database project and created authorised user with Supabase
 2. Create, delete and update tickets that can be managed across accessible users
-3. Single click buttons in the row provide the following actions:  
+3. Filter tickets by name, project and location with Search buttons
+4. Single click buttons in the row provide the following actions:  
     - Toggle ticket status between "Active" and "Completed"
     - Update and store ticket information with "Details"
     - "Report" the ticket with the Details content via pre-filled email to the desired recipient

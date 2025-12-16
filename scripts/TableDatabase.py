@@ -71,7 +71,6 @@ class TableController:
             "Urgency": urgency_str,
             "Cleanroom Location": location_str,
             "Status": "Active",
-            "Details": "",
             "History": "",
             "Project": project_str,
             "Creator": creator_str,
@@ -197,7 +196,7 @@ class TableController:
         # Open the input window for ticket details
         id_item = self.table.item(row_position, 6)
         row_id = int(id_item.text())
-        details = DetailsDialog(row_id, self.client)
+        details = DetailsDialog(row_id, self.client, self.tab_no)
         details.resize(550,450)
         details.exec()
     
@@ -237,6 +236,9 @@ class TableController:
             # Create table widget and align centrally
             widget_item = QTableWidgetItem(item)
             widget_item.setTextAlignment(Qt.AlignCenter)
+            # Disable selection for Deleted rows
+            if self.tab_no == 4:
+                widget_item.setFlags(widget_item.flags() & ~Qt.ItemIsSelectable)
             return widget_item
 
         self.row_position = 0
@@ -246,7 +248,7 @@ class TableController:
                 status_button.setCheckable(True)
                 details_button = QPushButton()
                 report_button = QPushButton()
-
+                    
                 self.table.insertRow(self.row_position)
                 self.table.setItem(self.row_position, 6, QTableWidgetItem(str(row["id"])))
 
@@ -259,7 +261,16 @@ class TableController:
 
                 self.trigger_button(details_button, "Details", "black", lambda _, r = self.row_position: self.open_details(r))
                 self.trigger_button(report_button, "Report", "black", lambda _, r = self.row_position: self.mail_to(r))
-                
+
+                if self.tab_no == 4:
+                    # Disable buttons for deleted rows
+                    status_button.setEnabled(False)
+                    report_button.setEnabled(False)
+                    status_button.setStyleSheet("background: none;\n"
+                                                "color: gray")
+                    report_button.setStyleSheet("background: none;\n"
+                                                "color: gray")
+                    
                 self.table.setItem(self.row_position, 0, item_and_align(row["Ticket Name"]))
                 self.table.setItem(self.row_position, 1, item_and_align(row["Ticket ID"]))
                 self.table.setItem(self.row_position, 2, item_and_align(row["Urgency"]))
@@ -271,3 +282,32 @@ class TableController:
                 self.row_position += 1
             
         self.table.setSortingEnabled(True)
+    
+    def delete_row(self):
+        # Delete row from the table but keep in database for logging
+
+        item = self.table.currentItem()
+        if item is None:
+            QMessageBox.critical(None, "Delete Ticket", "Click on the row to delete it", QMessageBox.Ok)
+            return
+        
+        # Obtain delete name
+        delete_name = self.input_dialog("User Delete", "Please provide your name for deletion:")
+        if delete_name == "":
+            QMessageBox.critical(None, "Deletion Error", "Need to provide a valid name for deletion\n\nPlease try again", QMessageBox.Ok)
+            return
+        elif delete_name is None:
+            return
+        
+        # Obtain row id
+        row = item.row()
+        id_item = self.table.item(row, 6)
+        row_id = int(id_item.text())
+
+        # Deleted message
+        time_stamp = datetime.now()
+        message = f"Ticket deleted by {delete_name} at {time_stamp.strftime("%d/%m/%Y, %H:%M")}"
+
+        self.client.table("SafetyManager").update({"Tab": 4}).eq("id", row_id).execute()
+        self.client.rpc("append_signature", {"row_id": row_id, "extra_text": message}).execute()
+        self.table.removeRow(row)

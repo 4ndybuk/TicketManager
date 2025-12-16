@@ -11,123 +11,9 @@
 from PySide6.QtCore import (QCoreApplication, QMetaObject, QRect, QSize, Qt)
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import (QLabel, QLineEdit, QMenuBar, QPushButton,
-    QStackedWidget, QStatusBar, QTableWidget, QWidget, QTabWidget, QHeaderView, QToolBar)
+    QStackedWidget, QStatusBar, QTableWidget, QWidget, QTabWidget, QHeaderView, QTextEdit)
 import background_rc
-
-# Stylesheet for the interface buttons
-
-buttonstyle = """
-            QPushButton {
-                background-color: rgb(177, 180, 180);
-                border: 2px solid #000000;
-                border-radius: 10px;
-                padding: 6px 12px;
-                font-size: 13px;
-                color: #000000;
-                text-align: center;
-                }
-            QPushButton:hover {
-                background-color: rgba(134, 135, 135, 0.9);
-                border: 3px solid #000000
-                }
-            QPushButton:pressed {
-                background-color: rgb(134, 135, 135);
-                border: 2px solid #717171;
-                }
-                """
-
-# Stylesheet for the interface text displays
-lineedit_style = """
-                QLineEdit {
-                    background: transparent;
-                    background-color: rgba(177, 180, 180, 0.8);
-                    border-radius: 10px;
-                    border: 2px solid #000000;
-                    color: rgb(0, 0, 0);
-                }
-                QMenu {
-                    background-color: #F0F0F0;   
-                    border: 2px solid #C0C0C0;   
-                    border-radius: 6px;
-                    padding: 3px;         
-                }
-                QMenu::item {
-                    background-color: transparent; 
-                }
-                QMenu::item:selected { 
-                    background-color: rgb(177, 180, 180);    
-                    color: black;                
-                    border-radius: 4px;
-                }
-                QMenu::separator {
-                    height: 1px;                  
-                    background: rgb(177, 180, 180);          
-                    margin-left: 10px;
-                    margin-right: 10px;
-                }
-                QMenu::indicator {
-                    width: 16px;                  
-                    height: 16px;
-                }
-                QMenu::indicator:checked {
-                    background-color: rgb(177, 180, 180);    
-                }
-                QMenu::item:disabled {
-                    color: #A0A0A0;                
-                }
-                """
-
-table_style = """
-                QTableWidget {
-                    background: transparent;   
-                    background-color: rgba(255, 255, 255, 0.7);
-                    padding: 1px;
-                }                    
-                QTableWidget::item:selected {
-                    background: transparent; 
-                    background-color: rgba(177, 180, 180, 0.6);
-                    padding: 2px
-                }                 
-                QTableWidget::item:focus {
-                    background-color: rgba(177, 180, 180, 0.6);
-                    outline: none;                      
-                }                   
-                QScrollBar:vertical {
-                    background: transparent;
-                    width: 8px;
-                    margin: 0px;
-                }
-                QScrollBar::handle:vertical {
-                    background: rgba(0, 0, 0, 0.5);
-                    border-radius: 4px;
-                }
-                QScrollBar::handle:vertical:hover {
-                    background: rgba(0, 0, 0, 0.8);
-                }
-                QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-                    border: none;
-                    background: none;
-                }
-                QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
-                    background: none;
-                }
-                """
-
-toolbar_style = """
-                QToolBar {
-                    background: none
-                }
-                QToolButton {
-                    background-color: lightgray;
-                    border: 1px lightgray;
-                    padding: 2px;
-                    background: none;
-                    border-radius: 5px
-                }
-                QToolButton:hover {
-                    background-color: darkgray;
-                }
-                """
+from stylesheets import *
 
 class Ui_MainWindow(object):
     # TABLE GENERIC FUNCTIONS
@@ -146,6 +32,8 @@ class Ui_MainWindow(object):
         table.horizontalHeader().setDefaultSectionSize(114)
         table.horizontalHeader().setStretchLastSection(False)
         table.verticalHeader().setFixedWidth(6)
+        table.setHorizontalHeaderLabels(["Ticket Name", "Ticket ID", "Urgency", 
+                                        "Location", "Status", "Details", "", "Report"])
         table.setShowGrid(False)
         header = table.horizontalHeader()
         header.setFont(font)
@@ -197,15 +85,11 @@ class Ui_MainWindow(object):
         self.appTitle.setStyleSheet(u"background-color: rgba(255, 255, 255, 0.0);\n"
         "color: black;\n"
         "background: none;\n")
+
         self.loginButton = QPushButton(self.loginPage)
         self.loginButton.setObjectName(u"loginButton")
-        self.loginButton.setGeometry(QRect(350, 350, 111, 31))
-        self.loginButton.setFont(font)
-        self.loginButton.setStyleSheet(buttonstyle)
-        self.loginButton.setCheckable(True)
-        self.loginButton.setChecked(False)
-        self.loginButton.setAutoDefault(False)
-        self.loginButton.setFlat(False)
+        self.set_button(self.loginButton, QRect(350, 350, 111, 31))
+
         self.usernameLabel = QLabel(self.loginPage)
         self.usernameLabel.setObjectName(u"usernameLabel")
         self.usernameLabel.setGeometry(QRect(340, 198, 131, 31))
@@ -215,6 +99,7 @@ class Ui_MainWindow(object):
         "background: transparent;\n"
         "background-color: rgba(177, 180, 180, 0.7);\n"
         "color: rgb(0, 0, 0);")
+
         self.passInput = QLineEdit(self.loginPage)
         self.passInput.setObjectName(u"passInput")
         self.passInput.setGeometry(QRect(290, 300, 231, 31))
@@ -222,6 +107,7 @@ class Ui_MainWindow(object):
         self.passInput.setStyleSheet(lineedit_style)
         self.passInput.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.passInput.setClearButtonEnabled(False)
+
         self.passwordLabel = QLabel(self.loginPage)
         self.passwordLabel.setObjectName(u"passwordLabel")
         self.passwordLabel.setGeometry(QRect(340, 268, 131, 31))
@@ -231,18 +117,21 @@ class Ui_MainWindow(object):
         "background: transparent;\n"
         "background-color: rgba(177, 180, 180, 0.7);\n"
         "color: rgb(0, 0, 0);")
+
         self.userInput = QLineEdit(self.loginPage)
         self.userInput.setObjectName(u"userInput")
         self.userInput.setGeometry(QRect(290, 230, 231, 31))
         self.userInput.setFont(font)
         self.userInput.setStyleSheet(lineedit_style)
         self.userInput.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
         self.quitButton = QPushButton(self.loginPage)
         self.quitButton.setObjectName(u"quitButton")
         self.quitButton.setGeometry(QRect(350, 390, 111, 31))
         self.quitButton.setFont(font)
         self.quitButton.setStyleSheet(buttonstyle)
         self.quitButton.setAutoDefault(True)
+
         self.bottomTitle = QLabel(self.loginPage)
         self.bottomTitle.setObjectName(u"bottomTitle")
         self.bottomTitle.setGeometry(QRect(0, 480, 801, 71))
@@ -250,6 +139,7 @@ class Ui_MainWindow(object):
         self.bottomTitle.setStyleSheet(u"background-color: rgb(255, 255, 255);\n"
         "color: black;\n"
         "background: none;")
+
         self.stackedWidget.addWidget(self.loginPage)
         ################################################################
         # TABLE PAGE
@@ -264,8 +154,7 @@ class Ui_MainWindow(object):
         self.tableWidget = QTableWidget(self.workPage)
         self.tableWidget.setObjectName(u"tableWidget")
         self.set_table(self.tableWidget)
-        self.tableWidget.setHorizontalHeaderLabels(["Ticket Name", "Ticket ID", "Urgency", 
-                                                    "Location", "Status", "Details", "", "Report"])
+        
         # Buttons
         self.create1Button = QPushButton(self.workPage)
         self.create1Button.setObjectName(u"create1Button")
@@ -294,8 +183,7 @@ class Ui_MainWindow(object):
         self.table_2_Widget = QTableWidget(self.generalPage)
         self.table_2_Widget.setObjectName(u"table_2_Widget")
         self.set_table(self.table_2_Widget)
-        self.table_2_Widget.setHorizontalHeaderLabels(["Ticket Name", "Ticket ID", "Urgency", 
-                                                    "Location", "Status", "Details", "", "Report"])
+        
         # Buttons
         self.create2Button = QPushButton(self.generalPage)
         self.create2Button.setObjectName(u"create2Button")
@@ -322,8 +210,7 @@ class Ui_MainWindow(object):
         self.table_3_Widget = QTableWidget(self.stockPage)
         self.table_3_Widget.setObjectName(u"table_3_Widget")
         self.set_table(self.table_3_Widget)
-        self.table_3_Widget.setHorizontalHeaderLabels(["Ticket Name", "Ticket ID", "Urgency", 
-                                                    "Location", "Status", "Details", "", "Report"])
+
         # Buttons
         self.create3Button = QPushButton(self.stockPage)
         self.create3Button.setObjectName(u"create3Button")
@@ -342,8 +229,17 @@ class Ui_MainWindow(object):
         self.set_button(self.delete3Button, QRect(600, 510, 161, 31))
 
         self.tableTabs.addTab(self.stockPage, "Stock")
-        self.stackedWidget.addWidget(self.tableTabs)
+        # -----------/ FOURTH TAB /-------------
+        # Dedicated to keep track of deleted tickets
+        self.deletedPage = QWidget()
+        self.deletedPage.setObjectName(u"deletedPage")
 
+        self.table_4_Widget = QTableWidget(self.deletedPage)
+        self.table_4_Widget.setObjectName(u"table_4_Widget")
+        self.set_table(self.table_4_Widget)
+        self.tableTabs.addTab(self.deletedPage, "Deleted")
+        # -------------------------------------
+        self.stackedWidget.addWidget(self.tableTabs)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")

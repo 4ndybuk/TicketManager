@@ -9,7 +9,7 @@ import supabase
 from datetime import datetime
 
 class DetailsDialog(QDialog):
-    def __init__(self, row_id: int, client: supabase.Client):
+    def __init__(self, row_id: int, client: supabase.Client, tab_no: int):
         super().__init__()
         self.row_id = row_id
         self.client = client
@@ -53,7 +53,6 @@ class DetailsDialog(QDialog):
         edit_label.setFont("JetBrains Mono NL")
 
         self.editor = QTextEdit()
-        self.load_text()
 
         edit_layout = QVBoxLayout()
         h_edit_layout = QHBoxLayout()
@@ -88,6 +87,14 @@ class DetailsDialog(QDialog):
 
         layout = QVBoxLayout()
         layout.addWidget(tabs)
+
+        # Turn off functions for the Deleted tab
+        if tab_no == 4:
+            save_button.setEnabled(False)
+            self.editor.setReadOnly(True)
+            # Show history upon opening
+            tabs.setCurrentIndex(1)
+
         self.setLayout(layout)
 
         self.setWindowTitle("Ticket Details")
@@ -98,22 +105,6 @@ class DetailsDialog(QDialog):
         if ok:
             return name
         return None
-
-    def load_text(self):
-        # Load the text into the editor
-        try:
-            response = (
-                self.client.table("SafetyManager")
-                .select("Details")
-                .eq("id", self.row_id)
-                .single()
-                .execute()
-            )
-            # Write data into the editor
-            self.editor.setPlainText(response.data["Details"])
-        except Exception as e:
-            print(e)
-            pass
     
     def load_reader(self):
         # Load the text into the reader
@@ -147,8 +138,6 @@ class DetailsDialog(QDialog):
         else:
             name_text = f"Saved by {name} at {date_time.strftime("%d/%m/%Y %H:%M:%S")}"
             full_text = text + "\n" + name_text
-            # Update the details column in the database
-            self.client.table("SafetyManager").update({"Details": str(text)}).eq("id", self.row_id).execute()
             # Update the history column in the database
             self.client.rpc("append_signature", {"row_id": self.row_id, "extra_text": str(full_text)}).execute()
             QMessageBox.information(None, "Save", "Details saved", QMessageBox.Ok)
