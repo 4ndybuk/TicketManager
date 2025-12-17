@@ -1,4 +1,5 @@
 # Ticket Manager 
+## v1.3.0
 GUI program with active database to submit and control the flow of workplace-management  
 related tickets e.g health & safety, general issues and stock management queries. Ideal for monitoring    
 in controlled settings such as laboratories or workshops.  
