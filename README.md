@@ -1,6 +1,6 @@
 # Ticket Manager 
 GUI program with active database to submit and control the flow of workplace-management  
-related queries e.g health & safety, general issues and stock management. Ideal for monitoring    
+related tickets e.g health & safety, general issues and stock management queries. Ideal for monitoring    
 in controlled settings such as laboratories or workshops.  
 
 ## Details
@@ -16,11 +16,12 @@ in controlled settings such as laboratories or workshops.
 - [License](#license) 
 
 ## Installation
-1. Run in your terminal  
+1. Ensure you have the latest version of Python on your computer
+2. Run in your terminal  
    ```
    git clone https://github.com/4ndybuk/TicketManager
    ```
-2. Go to the cloned directory and install dependancies with    
+3. Go to the cloned directory and install dependancies with    
    ```
    pip install -r requirements.txt
    ```
@@ -29,20 +30,20 @@ in controlled settings such as laboratories or workshops.
    touch ./.env   (bash)
    type nul > .env    (Windows)
    ```
-4. Option A: Database already made  
+5. Option A: Database already made  
      - Speak to relevant person to retrieve Supabase URL and KEY
       ```
       https://supabase.com
       ```
-5. Option B: No known database  
+6. Option B: No known database  
      - Create a new supabase project and retrieve the associated URL and KEY
        
-6. Append and save the URL and KEY into the .env file in the form of    
+7. Append and save the URL and KEY into the .env file in the form of    
    ```
    SUPABASE_URL=your_url_here
    SUPABASE_KEY=your_key_here
    ```
-7. Run the program with a supabase authorised user  
+8. Run the program with a supabase authorised user  
    ```
    python TicketManager.py
    ```
